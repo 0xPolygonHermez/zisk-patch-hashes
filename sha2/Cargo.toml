@@ -18,13 +18,14 @@ categories = ["cryptography", "no-std"]
 digest = "0.10.7"
 cfg-if = "1.0"
 
-ziskos = { git = "https://github.com/0xPolygonHermez/zisk.git" }
-# Local development
-# ziskos = { path = "../../../zisk/ziskos/entrypoint" }
-
 [target.'cfg(any(target_arch = "aarch64", target_arch = "x86_64", target_arch = "x86"))'.dependencies]
 cpufeatures = "0.2"
 sha2-asm = { version = "0.6.1", optional = true }
+
+[target.'cfg(all(target_os = "zkvm", target_vendor = "zisk"))'.dependencies]
+ziskos = { git = "https://github.com/0xPolygonHermez/zisk.git" }
+# Local development
+# ziskos = { path = "../../../zisk/ziskos/entrypoint" }
 
 [dev-dependencies]
 digest = { version = "0.10.7", features = ["dev"] }
