@@ -3,9 +3,13 @@ use core::convert::TryInto;
 const PLEN: usize = 25;
 const DEFAULT_ROUND_COUNT: usize = 24;
 
+#[cfg(all(target_os = "zkvm", target_vendor = "zisk"))]
+use crate::zisk;
+
 #[derive(Clone)]
 pub(crate) struct Sha3State {
     pub state: [u64; PLEN],
+    #[cfg_attr(all(target_os = "zkvm", target_vendor = "zisk"), allow(unused))]
     round_count: usize,
 }
 
@@ -34,7 +38,7 @@ impl Sha3State {
             *s ^= u64::from_le_bytes(b.try_into().unwrap());
         }
 
-        keccak::p1600(&mut self.state, self.round_count);
+        self.permute();
     }
 
     #[inline(always)]
@@ -46,6 +50,10 @@ impl Sha3State {
 
     #[inline(always)]
     pub(crate) fn permute(&mut self) {
+        #[cfg(all(target_os = "zkvm", target_vendor = "zisk"))]
+        zisk::keccakf(&mut self.state);
+
+        #[cfg(not(all(target_os = "zkvm", target_vendor = "zisk")))]
         keccak::p1600(&mut self.state, self.round_count);
     }
 }
