@@ -30,6 +30,3 @@ std = ["digest/std"]
 asm = ["keccak/asm"] # Enable ASM (currently ARMv8 only). WARNING: Bumps MSRV to 1.59
 oid = ["digest/oid"] # Enable OID support. WARNING: Bumps MSRV to 1.57
 reset = [] # Enable reset functionality
-
-[lints.rust]
-unexpected_cfgs = { level = "warn", check-cfg = ['cfg(target_vendor, values("zisk"))'] }
