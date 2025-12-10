@@ -2,7 +2,25 @@ use digest::{generic_array::GenericArray, typenum::U64};
 
 cfg_if::cfg_if! {
     if #[cfg(all(target_os = "zkvm", target_vendor = "zisk"))] {
-        use ziskos::zisklib::sha256f_compress as compress;
+        extern "C" {
+            fn sha256f_compress_c(
+                state_ptr: *mut u32,
+                blocks_ptr: *const u8,
+                num_blocks: usize,
+            );
+        }
+        
+        #[inline(always)]
+        fn compress(state: &mut [u32; 8], blocks: &[[u8; 64]]) {
+            // SAFETY: state and blocks have valid pointers and lengths
+            unsafe {
+                sha256f_compress_c(
+                    state.as_mut_ptr(),
+                    blocks.as_ptr() as *const u8,
+                    blocks.len(),
+                );
+            }
+        }
     } else if #[cfg(feature = "force-soft-compact")] {
         mod soft_compact;
         use soft_compact::compress;
