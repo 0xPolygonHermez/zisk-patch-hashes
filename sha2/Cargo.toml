@@ -17,6 +17,8 @@ categories = ["cryptography", "no-std"]
 [dependencies]
 digest = "0.10.7"
 cfg-if = "1.0"
+ziskos = { path = "../../zisk/ziskos/entrypoint" }
+# print-no-std = "0.2"
 
 [target.'cfg(any(target_arch = "aarch64", target_arch = "x86_64", target_arch = "x86"))'.dependencies]
 cpufeatures = "0.2"

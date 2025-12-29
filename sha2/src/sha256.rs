@@ -9,7 +9,7 @@ cfg_if::cfg_if! {
                 num_blocks: usize,
             );
         }
-        
+
         #[inline(always)]
         fn compress(state: &mut [u32; 8], blocks: &[[u8; 64]]) {
             // SAFETY: state and blocks have valid pointers and lengths
@@ -59,5 +59,11 @@ pub fn compress256(state: &mut [u32; 8], blocks: &[GenericArray<u8, U64>]) {
     // exactly the same memory layout
     let p = blocks.as_ptr() as *const [u8; 64];
     let blocks = unsafe { core::slice::from_raw_parts(p, blocks.len()) };
-    compress(state, blocks)
+
+    for block in blocks {
+        // print_no_std::print!("SHA-256 state in: {:x?}\n", state);
+        compress(state, core::slice::from_ref(block));
+        // print_no_std::print!("SHA-256 state out: {:x?}\n", state);
+        ziskos::hints::hint_sha2(&state);
+    }
 }
