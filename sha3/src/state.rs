@@ -54,6 +54,9 @@ impl Sha3State {
         zisk::keccakf(&mut self.state);
 
         #[cfg(not(all(target_os = "zkvm", target_vendor = "zisk")))]
-        keccak::p1600(&mut self.state, self.round_count);
+        {
+            keccak::p1600(&mut self.state, self.round_count);
+            ziskos::hints::hint_keccakf(&self.state);
+        }
     }
 }
